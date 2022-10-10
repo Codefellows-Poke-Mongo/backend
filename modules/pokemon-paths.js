@@ -1,9 +1,10 @@
+const PokemonPath = {};
 const { response, request } = require('express');
-const Profile = require('./models/Profile.js');
+const Profile = require('../models/Profile.js');
 
 PokemonPath.getAll = async (req,res) => {
     const pokemons = await Profile.find();
-    response.status(201).json(pokemons);
+    res.status(201).json(pokemons);
 };
 
 PokemonPath.getOne = async (req,res) => {
@@ -18,3 +19,4 @@ PokemonPath.create = async (req,res) => {
     res.send(pokemon);
 };
 
+module.exports = PokemonPath;

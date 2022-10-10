@@ -3,12 +3,7 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
-const profileSchema = new Schema({
-    Name: {type: String, required: true},
-    Pokemon: {type: [PokemonSchema], required: true},
-});
-
-const PokemonSchema = new Schema ({
+const PokemonSchema = new Schema({
     Name: { type: String, required: true },
     ID: { type: Number, required: true },
     Types: { type: Array, required: true },
@@ -17,6 +12,13 @@ const PokemonSchema = new Schema ({
     Base_stat: { type: Number, required: true },
     Moves: { type: Array, required: true },
 });
+
+
+const profileSchema = new Schema({
+    Name: {type: String, required: true},
+    Pokemon: {type: [PokemonSchema], required: true},
+});
+
 
 const Profile = mongoose.model('profile', profileSchema);
 const Pokemon = mongoose.model('pokemon', PokemonSchema);

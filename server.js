@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const cors = require('cors');
 const express = require('express');
+const PokemonPath = require('./modules/pokemon-paths.js');
 
 const mongoose = require('mongoose');
 
@@ -27,6 +28,9 @@ app.get('/', (request, response) => {
     response.send('test request recieved')
 })
 
+app.get('/pokedex', PokemonPath.getAll);
+app.get('/pokedex/:id', PokemonPath.getOne);
+app.post('/pokedex', PokemonPath.create)
 
 
 
@@ -40,4 +44,5 @@ app.use((error, req, res) => {
     res.status(500).send(error.message);
 });
 
-
+const PORT = process.env.PORT;
+app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));

@@ -30,8 +30,8 @@ app.get('/', (request, response) => {
 
 app.get('/pokedex', PokemonPath.getAll);
 app.get('/pokedex/:id', PokemonPath.getOne);
-app.post('/pokedex', PokemonPath.create)
-
+app.post('/pokedex', PokemonPath.create);
+app.get('/test', PokemonPath.getTest);
 
 
 // catch all

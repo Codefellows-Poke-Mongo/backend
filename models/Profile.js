@@ -23,4 +23,5 @@ const profileSchema = new Schema({
 const Profile = mongoose.model('profile', profileSchema);
 const Pokemon = mongoose.model('pokemon', PokemonSchema);
 
-module.exports = Profile;
+module.exports = {Profile, Pokemon};
+

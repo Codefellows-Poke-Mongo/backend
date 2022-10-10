@@ -10,5 +10,6 @@ const mongoose = require('mongoose');
 const app = express();
 app.use(cors());
 
+//middleware
 app.use(express.json());
 

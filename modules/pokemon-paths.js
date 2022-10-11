@@ -24,8 +24,8 @@ PokemonPath.getTest = async (req,res) => {
     try{
     const {default: Pokedex} = await import('pokedex-promise-v2');
     const P = new Pokedex();
-    const { name, moves, types, stats } = await P.getPokemonByName('ditto');
-        res.send([name, moves, types, stats]);
+        const { name, id, stats, types, moves } = await P.getPokemonByName('ditto');
+        res.send([name, id, stats, types, moves]);
     }catch(error){
         res.status(500).send(`Server error ${error}`)
     }

@@ -1,7 +1,7 @@
 'use strict'
 
 require('dotenv').config();
-
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const express = require('express');
 const PokemonPath = require('./modules/pokemon-paths.js');
@@ -34,7 +34,13 @@ app.post('/pokedex', PokemonPath.find);
 app.get('/create', PokemonPath.createProfile);
 app.post('/trade', PokemonPath.trade);
 app.get('/register', async (req, res) => {
-    res.send(req.headers);
+    // authentication logic here
+    let tok = req.headers.authorization.split(' ')[1];
+    jwt.verify(tok, (err, decoded) => {
+        if (!err) {
+            res.redirect('/create?name=' + decoded)
+        } else if (err) res.send('jwt error')
+    })
 })
 
 

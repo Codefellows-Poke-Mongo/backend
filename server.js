@@ -40,7 +40,7 @@ app.get('/register', async (req, res, next) => {
         jwt.verify(tok, process.env.CLIENT_SECRET, (err, decoded) => {
             if (!err) {
                 res.redirect('/create?name=' + decoded)
-            } else if (err) throw 'Something is not right'
+            } else if (err) throw new Error('foo')
         })
     } catch (error) {
         next(error)
@@ -50,7 +50,7 @@ app.get('/register', async (req, res, next) => {
 
 // catch all
 app.get('*', (req, res) => {
-    res.statusMessage(404).send('Not found');
+    res.status(404).send('Not found');
 });
 
 //error handling

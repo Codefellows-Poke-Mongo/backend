@@ -1,4 +1,4 @@
-const Profile = require('../models/Profile.js');
+const {Profile, Pokemon} = require('../models/Profile.js');
 const _ = require('underscore');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
@@ -15,19 +15,19 @@ PokemonPath.getOne = async (req, res) => {
     res.send(pokemon);
 };
 
-PokemonPath.create = async (req, res) => {
+PokemonPath.find = async (req, res) => {
     const { name } = req.body;
     const pokemon = await Profile.findOne({ name: name }).exec();
     res.send(pokemon);
 };
 
-PokemonPath.getTest = async (req, res) => {
+PokemonPath.createProfile = async (req, res) => {
     try {
         const { default: Pokedex } = await import('pokedex-promise-v2');
         const P = new Pokedex();
         const interval = {
-            limit: 50,
-            offset: 66
+            limit: 150,
+            offset: 0
         }
         const obj = await P.getPokemonsList(interval);
         let randomSelections = _.sample(obj.results, 6);
@@ -35,10 +35,18 @@ PokemonPath.getTest = async (req, res) => {
             let data = await fetch(pokemon.url);
             let json = await data.json();
             let { name, id, types, stats, moves } = json;
-            return { name: name, id: id, types: types, stats: stats, moves: moves };
+            let moveNames = moves.reduce((acc, move) => {
+                acc.push(move.move.name);
+                return acc;
+            }, []);
+            return Pokemon.create({ Name: name, ID: id, Types: types, Stats: stats, Moves: moveNames });
 
         })); // [Promise<Object>, Promise<Object>, Promise<Object>] ----> Promise<Array>
-        res.send(pokemonToSearch);
+        const mongoData = await Profile.create({
+            Name: 'Ben',
+            Pokemon: pokemonToSearch
+            })
+        res.send(mongoData);
     } catch (error) {
         res.status(500).send(`Server error ${error}`)
     }

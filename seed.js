@@ -10,8 +10,8 @@ const {Pokemon} = require('./models/Profile.js');
 
 async function seed() {
     await Pokemon.create({
-        
             Name: "ditto",
+            ID: 132,
             Moves: [
                 {
                     "move": {
@@ -79,8 +79,9 @@ async function seed() {
                     }
                 }
             ]
-        
     });
+    console.log('done seeding!');
+    mongoose.disconnect();
 }
 
 seed();

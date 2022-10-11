@@ -36,7 +36,7 @@ app.post('/trade', PokemonPath.trade);
 app.get('/register', async (req, res) => {
     // authentication logic here
     let tok = req.headers.authorization.split(' ')[1];
-    jwt.verify(tok, (err, decoded) => {
+    jwt.verify(tok, process.env.CLIENT_SECRET, (err, decoded) => {
         if (!err) {
             res.redirect('/create?name=' + decoded)
         } else if (err) res.send('jwt error')

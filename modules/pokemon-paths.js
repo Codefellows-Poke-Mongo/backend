@@ -52,4 +52,9 @@ PokemonPath.createProfile = async (req, res) => {
     }
 }
 
+PokemonPath.trade = async (req, res) => {
+    const {pokeWanted} = req.body;
+    res.send(pokeWanted);
+}
+
 module.exports = PokemonPath;

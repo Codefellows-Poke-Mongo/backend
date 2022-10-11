@@ -33,14 +33,18 @@ app.get('/pokedex/:id', PokemonPath.getOne);
 app.post('/pokedex', PokemonPath.find);
 app.get('/create', PokemonPath.createProfile);
 app.post('/trade', PokemonPath.trade);
-app.get('/register', async (req, res) => {
+app.get('/register', async (req, res, next) => {
     // authentication logic here
     let tok = req.headers.authorization.split(' ')[1];
-    jwt.verify(tok, process.env.CLIENT_SECRET, (err, decoded) => {
-        if (!err) {
-            res.redirect('/create?name=' + decoded)
-        } else if (err) res.send('jwt error')
-    })
+    try {
+        jwt.verify(tok, process.env.CLIENT_SECRET, (err, decoded) => {
+            if (!err) {
+                res.redirect('/create?name=' + decoded)
+            } else if (err) throw 'Something is not right'
+        })
+    } catch (error) {
+        next(error)
+    }
 })
 
 

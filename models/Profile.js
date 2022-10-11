@@ -8,8 +8,6 @@ const PokemonSchema = new Schema({
     ID: { type: Number, required: true },
     Types: { type: Array, required: true },
     Stats: { type: Array, required: true },
-    // Stat: { type: Object, required: true },
-    // Base_stat: { type: Number, required: true },
     Moves: { type: Array, required: true },
 });
 

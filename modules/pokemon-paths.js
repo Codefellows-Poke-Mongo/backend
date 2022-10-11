@@ -43,7 +43,7 @@ PokemonPath.createProfile = async (req, res) => {
 
         })); // [Promise<Object>, Promise<Object>, Promise<Object>] ----> Promise<Array>
         const mongoData = await Profile.create({
-            Name: 'Ben',
+            Name: req.query.name,
             Pokemon: pokemonToSearch
             })
         res.send(mongoData);

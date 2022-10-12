@@ -1,6 +1,6 @@
-const {Profile, Pokemon} = require('../models/Profile.js');
+const { Profile, Pokemon } = require('../models/Profile.js');
 const _ = require('underscore');
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 const PokemonPath = {};
 
@@ -45,7 +45,7 @@ PokemonPath.createProfile = async (req, res) => {
         const mongoData = await Profile.create({
             Name: req.query.name,
             Pokemon: pokemonToSearch
-            })
+        })
         res.send(mongoData);
     } catch (error) {
         res.status(500).send(`Server error ${error}`)
@@ -53,16 +53,17 @@ PokemonPath.createProfile = async (req, res) => {
 }
 
 PokemonPath.trade = async (req, res) => {
-    const {pokeWanted} = req.body;
+    const { pokeWanted } = req.body;
     res.send(pokeWanted);
 }
 
-PokemonPath.findPokeForTrade = async (req, res) => {
-    const {pokeWanted} = req.body;
-    const userWithPokeWanted = Profile.find({Name: 'Ben'}).cursor();
-    for await (const doc of userWithPokeWanted) {
-        res.send(Object.values(doc.Pokemon).includes(pokeWanted))
-    }
+PokemonPath.findPokeForTrade = async (req, res, next) => {
+    const { pokeWanted } = req.body;
+    const userWithPokeWanted = Profile
+      .find({ 'Pokemon.Name': pokeWanted.toLowerCase() })
+      .cursor({transform: (doc) => doc.Pokemon});
+    const out = await userWithPokeWanted.next();
+    res.send(out)
 }
 
 module.exports = PokemonPath;

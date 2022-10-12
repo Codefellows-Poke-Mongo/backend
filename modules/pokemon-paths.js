@@ -36,7 +36,7 @@ PokemonPath.searchForPokemon = async (req, res, next) => {
 PokemonPath.savePokemon = async (req, res, next) => {
     try {
         const { pokemon: { name, id, types, stats, moves }, userName } = req.body;
-        const pokeDoc = Pokemon.create({ Name: name, ID: id, Types: types, Stats: stats, Moves: moves })
+        const pokeDoc = Pokemon.create({ Name: name, ID: id, Types: types || [], Stats: stats || [], Moves: moves || [] })
         const prof = await Profile.updateOne({ Name: userName }, { $push: { Pokemon: pokeDoc } });
         res.send(prof);
     } catch (err) {

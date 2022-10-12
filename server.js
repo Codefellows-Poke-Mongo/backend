@@ -7,6 +7,7 @@ const PokemonPath = require('./modules/pokemon-paths.js');
 const verifyUser = require('./auth.js')
 
 const mongoose = require('mongoose');
+const { Pokemon } = require('./models/Profile.js');
 
 const app = express();
 
@@ -33,6 +34,8 @@ app.post('/pokedex', PokemonPath.find);
 app.get('/create', PokemonPath.createProfile);
 app.post('/trade', PokemonPath.findPokeForTrade);
 app.get('/register', PokemonPath.createProfile);
+app.post('/search', PokemonPath.searchForPokemon);
+app.get('/save', PokemonPath.savePokemon);
 
 
 // catch all
@@ -42,7 +45,7 @@ app.get('*', (req, res) => {
 
 //error handling
 app.use((error, req, res) => {
-    res.status(500).send(error.message);
+    res.send(error.message);
 });
 
 const PORT = process.env.PORT;

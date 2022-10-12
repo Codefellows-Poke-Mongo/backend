@@ -1,18 +1,19 @@
 'use strict'
 
 require('dotenv').config();
-const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const express = require('express');
 const PokemonPath = require('./modules/pokemon-paths.js');
+const verifyUser = require('./auth.js')
 
 const mongoose = require('mongoose');
 
 const app = express();
-app.use(cors());
 
 //middleware
+app.use(cors());
 app.use(express.json());
+app.use(verifyUser);
 
 mongoose.connect(process.env.DB_URL);
 const db = mongoose.connection;
@@ -20,8 +21,6 @@ db.on('error', console.error.bind(console, 'mongodb connection error'));
 db.once('open', function () {
     console.log('Mongoose is connected');
 });
-
-const Profile = require('./models/Profile.js');
 
 //Endpoints
 app.get('/', (request, response) => {
@@ -33,19 +32,7 @@ app.get('/pokedex/:id', PokemonPath.getOne);
 app.post('/pokedex', PokemonPath.find);
 app.get('/create', PokemonPath.createProfile);
 app.post('/trade', PokemonPath.trade);
-app.get('/register', async (req, res, next) => {
-    // authentication logic here
-    let tok = req.headers.authorization.split(' ')[1];
-    try {
-        jwt.verify(tok, process.env.CLIENT_SECRET, (err, decoded) => {
-            if (!err) {
-                res.redirect('/create?name=' + decoded)
-            } else if (err) throw new Error('foo')
-        })
-    } catch (error) {
-        next(error)
-    }
-})
+app.get('/register', PokemonPath.createProfile);
 
 
 // catch all

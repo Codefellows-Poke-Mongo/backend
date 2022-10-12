@@ -35,7 +35,7 @@ app.get('/create', PokemonPath.createProfile);
 app.post('/trade', PokemonPath.findPokeForTrade);
 app.get('/register', PokemonPath.createProfile);
 app.post('/search', PokemonPath.searchForPokemon);
-app.get('/save', PokemonPath.savePokemon);
+app.post('/save', PokemonPath.savePokemon);
 
 
 // catch all

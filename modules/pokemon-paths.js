@@ -21,6 +21,29 @@ PokemonPath.find = async (req, res) => {
     res.send(pokemon);
 };
 
+PokemonPath.searchForPokemon = async (req, res, next) => {
+    try {
+        const { name } = req.body;
+        const { default: Pokedex } = await import('pokedex-promise-v2');
+        const P = new Pokedex();
+        const pokemon = await P.getPokemonByName(name.toLowerCase());
+        res.send(pokemon)
+    } catch (err) {
+        next(err)
+    }
+}
+
+PokemonPath.savePokemon = async (req, res, next) => {
+    try {
+        const { pokemon: { name, id, types, stats, moves }, userName } = req.body;
+        const pokeDoc = Pokemon.create({ Name: name, ID: id, Types: types, Stats: stats, Moves: moves })
+        const prof = await Profile.updateOne({ Name: userName }, { $push: { Pokemon: pokeDoc } });
+        res.send(prof);
+    } catch (err) {
+        next(err)
+    }
+}
+
 PokemonPath.createProfile = async (req, res) => {
     try {
         const { default: Pokedex } = await import('pokedex-promise-v2');
@@ -60,10 +83,15 @@ PokemonPath.trade = async (req, res) => {
 PokemonPath.findPokeForTrade = async (req, res, next) => {
     const { pokeWanted } = req.body;
     const userWithPokeWanted = Profile
-      .find({ 'Pokemon.Name': pokeWanted.toLowerCase() })
-      .cursor({transform: (doc) => doc.Pokemon});
+        .find({ 'Pokemon.Name': pokeWanted.toLowerCase() })
+        .cursor({ transform: (doc) => doc.Pokemon });
     const out = await userWithPokeWanted.next();
     res.send(out)
+}
+
+const createPokedex = async (range) => {
+    const { default: Pokedex } = await import('pokedex-promise-v2');
+    return new Pokedex();
 }
 
 module.exports = PokemonPath;

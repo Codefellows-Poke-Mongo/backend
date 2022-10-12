@@ -31,11 +31,6 @@ function verifyUser(request, response, next) {
         next();
     }
 
-
-    // const kid = process.env.AUTH0_CLIENT_SECRET;
-    // const key = await client.getSigningKey(kid);
-    // const signingKey = key.getPublicKey();
-
     try {
         const token = request.headers.authorization.split(' ')[1];
         jwt.verify(token, getKey, {}, valid);

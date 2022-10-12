@@ -31,7 +31,7 @@ app.get('/pokedex', PokemonPath.getAll);
 app.get('/pokedex/:id', PokemonPath.getOne);
 app.post('/pokedex', PokemonPath.find);
 app.get('/create', PokemonPath.createProfile);
-app.post('/trade', PokemonPath.trade);
+app.post('/trade', PokemonPath.findPokeForTrade);
 app.get('/register', PokemonPath.createProfile);
 
 

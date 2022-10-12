@@ -57,4 +57,12 @@ PokemonPath.trade = async (req, res) => {
     res.send(pokeWanted);
 }
 
+PokemonPath.findPokeForTrade = async (req, res) => {
+    const {pokeWanted} = req.body;
+    const userWithPokeWanted = Profile.find({Name: 'Ben'}).cursor();
+    for await (const doc of userWithPokeWanted) {
+        res.send(Object.values(doc.Pokemon).includes(pokeWanted))
+    }
+}
+
 module.exports = PokemonPath;

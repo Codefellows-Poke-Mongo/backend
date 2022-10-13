@@ -30,9 +30,7 @@ app.use('/register', verifyUser, PokemonPath.createProfile);
 app.get('/pokedex', PokemonPath.getAll);
 app.get('/pokedex/:id', PokemonPath.getOne);
 app.get('/pokedex', PokemonPath.find);
-app.get('/wstest', async (req, res) => {
-    res.redirect('ws://localhost:3001')
-})
+
 app.post('/trade', PokemonPath.findPokeForTrade);
 app.post('/search', PokemonPath.searchForPokemon);
 app.post('/save', PokemonPath.savePokemon);
@@ -54,7 +52,8 @@ const PORT = process.env.PORT;
 const server = app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
 const io = require('socket.io')(server, {
     cors: {
-      origin: '*',
+      origin: 'https://poke-mongo-backend.herokuapp.com',
+      methods: ['GET', 'POST']
     }
   });
 

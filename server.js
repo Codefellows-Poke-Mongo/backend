@@ -10,7 +10,6 @@ const mongoose = require('mongoose');
 const { Pokemon } = require('./models/Profile.js');
 
 const app = express();
-
 //middleware
 app.use(cors());
 app.use(express.json());
@@ -31,6 +30,9 @@ app.use('/register', verifyUser, PokemonPath.createProfile);
 app.get('/pokedex', PokemonPath.getAll);
 app.get('/pokedex/:id', PokemonPath.getOne);
 app.get('/pokedex', PokemonPath.find);
+app.get('/wstest', async (req, res) => {
+    res.redirect('ws://localhost:3001')
+})
 app.post('/trade', PokemonPath.findPokeForTrade);
 app.post('/search', PokemonPath.searchForPokemon);
 app.post('/save', PokemonPath.savePokemon);
@@ -49,4 +51,20 @@ app.use((error, req, res) => {
 });
 
 const PORT = process.env.PORT;
-app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
+const io = require('socket.io')(server, {
+    cors: {
+      origin: '*',
+    }
+  });
+
+  io.on('connect', socket => {
+    socket.on('connect', name => {
+      console.log(socket.connected)
+    })
+    socket.emit('connect', 'Welcome!');
+    socket.on('disconnect', () => {
+      socket.broadcast.emit('user-disconnected', users[socket.id]);
+      delete users[socket.id]
+    })
+  });

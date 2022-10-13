@@ -4,17 +4,16 @@ const mongoose = require('mongoose');
 
 require('dotenv').config();
 
-const init = require('../server');
-
 mongoose.connect(process.env.DB_URL);
 
 const {Pokemon, Profile} = require('./models/Profile.js');
 
 async function seed() {
-    // await Profile.create({
-    //     Name: 'Ben',
-    //     Pokemon: init.getTest('', );
-    // })
+    const pokeDoc = await Pokemon.create({id: 123, name: 'ditto', types: ['normal'], stats: [], moves: ['transform']});
+    await Profile.create({
+        Name: 'Ben',
+        Pokemon: [pokeDoc]
+    })
     console.log('done seeding!');
     mongoose.disconnect();
 }

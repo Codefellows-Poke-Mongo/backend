@@ -14,7 +14,6 @@ const app = express();
 //middleware
 app.use(cors());
 app.use(express.json());
-// app.use(verifyUser);
 
 mongoose.connect(process.env.DB_URL);
 const db = mongoose.connection;
@@ -28,11 +27,11 @@ app.get('/', (request, response) => {
     response.send('test request recieved')
 })
 
+app.use('/register', verifyUser, PokemonPath.createProfile);
 app.get('/pokedex', PokemonPath.getAll);
 app.get('/pokedex/:id', PokemonPath.getOne);
 app.get('/pokedex', PokemonPath.find);
 app.post('/trade', PokemonPath.findPokeForTrade);
-app.use('/register', verifyUser, PokemonPath.createProfile);
 app.post('/search', PokemonPath.searchForPokemon);
 app.post('/save', PokemonPath.savePokemon);
 

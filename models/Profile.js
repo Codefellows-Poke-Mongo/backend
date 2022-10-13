@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
 const PokemonSchema = new Schema({
-    Name: { type: String, required: true },
-    ID: { type: Number, required: true },
-    Types: { type: Array, required: true },
-    Stats: { type: Array, required: true },
-    Moves: { type: Array, required: true },
+    name: { type: String, required: true },
+    id: { type: Number, required: true },
+    types: { type: Array, required: false },
+    stats: { type: Array, required: false },
+    moves: { type: Array, required: false },
 });
 
 

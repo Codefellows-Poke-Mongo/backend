@@ -46,25 +46,7 @@ PokemonPath.savePokemon = async (req, res, next) => {
 
 PokemonPath.createProfile = async (req, res) => {
     try {
-        const { default: Pokedex } = await import('pokedex-promise-v2');
-        const P = new Pokedex();
-        const interval = {
-            limit: 150,
-            offset: 0
-        }
-        const obj = await P.getPokemonsList(interval);
-        let randomSelections = _.sample(obj.results, 6);
-        const pokemonToSearch = await Promise.all(randomSelections.map(async (pokemon) => {
-            let data = await fetch(pokemon.url);
-            let json = await data.json();
-            let { name, id, types, stats, moves } = json;
-            let moveNames = moves.reduce((acc, move) => {
-                acc.push(move.move.name);
-                return acc;
-            }, []);
-            return Pokemon.create({ name: name, id: id, types: types, stats: stats, moves: moveNames });
-
-        })); // [Promise<Object>, Promise<Object>, Promise<Object>] ----> Promise<Array>
+        const pokemonToSearch = await updatePokemon();// [Promise<Object>, Promise<Object>, Promise<Object>] ----> Promise<Array>
         const mongoData = await Profile.create({
             Name: req.query.name,
             Pokemon: pokemonToSearch
@@ -75,18 +57,59 @@ PokemonPath.createProfile = async (req, res) => {
     }
 }
 
+PokemonPath.updateProfile = async (req, res) => {
+    try {
+        const pokemonToUpdate = await updatePokemon();
+        const prof = await Profile.findOneAndUpdate({
+            Name: req.query.name
+        }, { Pokemon: pokemonToUpdate }, { new: true });
+        res.send(prof);
+    } catch (error) {
+        res.status(500).send(`Update failed: ${error.message}`);
+    }
+}
+
+const updatePokemon = async () => {
+    const { default: Pokedex } = await import('pokedex-promise-v2');
+    const P = new Pokedex();
+    const interval = {
+        limit: 150,
+        offset: 0
+    }
+    const obj = await P.getPokemonsList(interval);
+    let randomSelections = _.sample(obj.results, 6);
+    const pokemonToSearch = await Promise.all(randomSelections.map(async (pokemon) => {
+        let data = await fetch(pokemon.url);
+        let json = await data.json();
+        let { name, id, types, stats, moves } = json;
+        let moveNames = moves.reduce((acc, move) => {
+            acc.push(move.move.name);
+            return acc;
+        }, []).slice(0, 5);
+        return Pokemon.create({ name: name, id: id, types: types, stats: stats, moves: moveNames });
+
+    }));
+    return pokemonToSearch;
+}
+
 PokemonPath.trade = async (req, res) => {
     const { pokeWanted } = req.body;
     res.send(pokeWanted);
 }
 
 PokemonPath.findPokeForTrade = async (req, res, next) => {
-    const { pokeWanted } = req.body;
-    const userWithPokeWanted = Profile
-        .find({ 'Pokemon.Name': pokeWanted.toLowerCase() })
-        .cursor({ transform: (doc) => doc.Pokemon });
-    const out = await userWithPokeWanted.next();
-    res.send(out)
+    const { pokeWanted, pokeSent } = req.body;
+    const wanted = await Pokemon.create({ name: pokeWanted.name, id: pokeWanted.id })
+    const sent = await Pokemon.create({ name: pokeSent.name, id: pokeSent.id });
+    const userInitTrade = req.query.user;
+    const userWithPokeWanted = await Profile
+        .findOne({ 'Pokemon.name': pokeWanted.name.toLowerCase() });
+    userWithPokeWanted.Pokemon.filter(pokemon => pokemon.name !== pokeWanted.name).push(sent);
+    const recvProfile = await Profile.findOne({ 'Name': userInitTrade });
+    recvProfile.Pokemon.push(wanted);
+    await recvProfile.save()
+    await userWithPokeWanted.save();
+    res.send(`traded: ${wanted}; recv'd: ${sent}`)
 }
 
 const createPokedex = async (range) => {

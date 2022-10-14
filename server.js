@@ -30,9 +30,7 @@ app.use('/register', verifyUser, PokemonPath.createProfile);
 app.get('/pokedex', PokemonPath.getAll);
 app.get('/pokedex/:id', PokemonPath.getOne);
 app.get('/pokedex', PokemonPath.find);
-app.get('/wstest', async (req, res) => {
-    res.redirect('ws://localhost:3001')
-})
+app.get('/update', PokemonPath.updateProfile);
 app.post('/trade', PokemonPath.findPokeForTrade);
 app.post('/search', PokemonPath.searchForPokemon);
 app.post('/save', PokemonPath.savePokemon);

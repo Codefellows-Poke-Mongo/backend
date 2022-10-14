@@ -1,21 +1,34 @@
 'use strict'
 
 const mongoose = require('mongoose');
+const _ = require('underscore');
 
 require('dotenv').config();
 
+const { updatePokemon } = require('./modules/pokemon-paths')
+
 mongoose.connect(process.env.DB_URL);
 
-const {Pokemon, Profile} = require('./models/Profile.js');
+const { Pokemon, Profile } = require('./models/Profile.js');
 
-async function seed() {
-    const pokeDoc = await Pokemon.create({id: 123, name: 'ditto', types: ['normal'], stats: [], moves: ['transform']});
-    await Profile.create({
-        Name: 'Ben',
-        Pokemon: [pokeDoc]
-    })
-    console.log('done seeding!');
+async function seedPokemon() {
+    const { default: Pokedex } = await import('pokedex-promise-v2');
+    const P = new Pokedex();
+    for (const num of _.range(1, 151)) {
+        let { name, id, types, stats, moves } = await P.getPokemonByName(num);
+        await Pokemon.create({ name, id, types, stats, moves });
+    }
+
     mongoose.disconnect();
 }
 
-seed();
+async function seedProfiles() {
+    let pokemon = await Pokemon.find({})
+    for (const person of ['Mehtab', 'Ben', 'Max', 'Jose', 'Dolly Parton', 'Steve McQueen', 'Helmut Berger']) {
+        await Profile.create({ Name: person, Pokemon: _.sample(pokemon, 6) });
+    }
+    
+    mongoose.disconnect();
+}
+
+seedProfiles();

@@ -97,24 +97,25 @@ PokemonPath.trade = async (req, res) => {
     res.send(pokeWanted);
 }
 
-PokemonPath.findPokeForTrade = async (req, res, next) => {
-    const { pokeWanted, pokeSent } = req.body;
-    const wanted = await Pokemon.create({ name: pokeWanted.name, id: pokeWanted.id })
-    const sent = await Pokemon.create({ name: pokeSent.name, id: pokeSent.id });
-    const userInitTrade = req.query.user;
-    const userWithPokeWanted = await Profile
-        .findOne({ 'Pokemon.name': pokeWanted.name.toLowerCase() });
-    userWithPokeWanted.Pokemon.filter(pokemon => pokemon.name !== pokeWanted.name).push(sent);
-    const recvProfile = await Profile.findOne({ 'Name': userInitTrade });
-    recvProfile.Pokemon.push(wanted);
-    await recvProfile.save()
-    await userWithPokeWanted.save();
-    res.send(`traded: ${wanted}; recv'd: ${sent}`)
-}
+// PokemonPath.findPokeForTrade = async (req, res, next) => {
+//     const { pokeWanted, pokeSent } = req.body;
+//     const wanted = await Pokemon.create({ name: pokeWanted.name, id: pokeWanted.id })
+//     const sent = await Pokemon.create({ name: pokeSent.name, id: pokeSent.id });
+//     const userInitTrade = req.query.user;
+//     const userWithPokeWanted = await Profile
+//         .findOne({ 'Pokemon.name': pokeWanted.name.toLowerCase() });
+//     userWithPokeWanted['Pokemon'].filter(pokemon => pokemon.name !== pokeWanted.name).push(sent);
+//     //tx.Pokemon.forEach(poke => console.log(poke.name));
+//     const recvProfile = await Profile.findOne({ 'Name': userInitTrade });
+//     recvProfile.Pokemon.push(wanted);
+//     await recvProfile.save();
+//     await userWithPokeWanted.save();
+//     res.send(`traded: ${wanted}; recv'd: ${sent}`)
+// }
 
 const createPokedex = async (range) => {
     const { default: Pokedex } = await import('pokedex-promise-v2');
     return new Pokedex();
 }
 
-module.exports = PokemonPath;
+module.exports = {PokemonPath, updatePokemon};

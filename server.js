@@ -49,20 +49,22 @@ app.use((error, req, res) => {
 });
 
 const PORT = process.env.PORT;
-const server = app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
-const io = require('socket.io')(server, {
-    cors: {
-      origin: '*',
-    }
-  });
+app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
+// const io = require('socket.io')(server, {
+//     cors: {
+//       origin: 'http://localhost:3000',
+//       methods: ['GET', 'POST'],
+//       credentials: true
+//     }
+//   });
 
-  io.on('connect', socket => {
-    socket.on('connect', name => {
-      console.log(socket.connected)
-    })
-    socket.emit('connect', 'Welcome!');
-    socket.on('disconnect', () => {
-      socket.broadcast.emit('user-disconnected', users[socket.id]);
-      delete users[socket.id]
-    })
-  });
+//   io.on('connect', socket => {
+//     socket.on('connect', name => {
+//       console.log(socket.connected)
+//     })
+//     socket.emit('connect', 'Welcome!');
+//     socket.on('disconnect', () => {
+//       socket.broadcast.emit('user-disconnected', users[socket.id]);
+//       delete users[socket.id]
+//     })
+//   });

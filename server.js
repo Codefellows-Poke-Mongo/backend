@@ -52,7 +52,7 @@ const PORT = process.env.PORT;
 const server = app.listen(PORT, () => console.log(`Listening on PORT ${PORT}`));
 const io = require('socket.io')(server, {
     cors: {
-      origin: '*',
+      origin: 'http://localhost:3000',
       methods: ['GET', 'POST'],
       credentials: true
     }
